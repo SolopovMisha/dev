@@ -45,27 +45,30 @@ def count_clicks(telegram_token, short_link):
         return 0 # Или другое значение по умолчанию
 
 def main():
-    telegram_token = os.environ['TELEGRAM_TOKEN']
-    parser = argparse.ArgumentParser( 
-    description='Сокращение ссылок'
-)
-    parser.add_argument('user_url', help='Введите ссылку: ')
-    args = parser.parse_args()
-    # user_url = input("Введите ссылку: ")
-    parsed_url = urlparse(args.user_url)
-    
-    try:
-        if parsed_url.netloc == "vk.cc":
-            try:
-                clicks = count_clicks(telegram_token, parsed_url.path[1:])
-                print("Количество кликов по ссылке:", clicks)
-            except requests.exceptions.HTTPError as e:
-                print(f"HTTP error при подсчете кликов: {e}")
-        else:
-            print("Сокращёная ссылка:", shorten_link(telegram_token, args.user_url))
-    except requests.exceptions.HTTPError as e:
-        print(f"HTTP error: {e}")
+    if __name__ == "__main__":
+        # Перенесите загрузку переменных окружения сюда
+        dotenv.load_dotenv()
+        vk_token = os.environ['VK_TOKEN']
 
+        parser = argparse.ArgumentParser(
+            description='Сокращение ссылок'
+        )
+        parser.add_argument('user_url', help='Введите ссылку: ')
+        args = parser.parse_args()
+        # user_url = input("Введите ссылку: ")
+        parsed_url = urlparse(args.user_url)
+
+        try:
+            if parsed_url.netloc == "vk.cc":
+                try:
+                    clicks = count_clicks(vk_token, parsed_url.path[1:])
+                    print("Количество кликов по ссылке:", clicks)
+                except requests.exceptions.HTTPError as e:
+                    print(f"HTTP error при подсчете кликов: {e}")
+            else:
+                print("Сокращённая ссылка:", shorten_link(vk_token, args.user_url))
+        except requests.exceptions.HTTPError as e:
+            print(f"HTTP error: {e}")
 
 if __name__ == "__main__":
     main()
